@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.membership.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +100,7 @@ public class BadgeServiceImpl implements BadgeService {
 		List<TimeSlot> dayTimeSlot = location.getTimeSlots()
 				.stream()
 				.filter(s -> s.getDayOfWeek().valueOfTheDay() == dayOfTheWeek)
-				.toList();
+				.collect(Collectors.toList());
 
 		LocalTime currentTime = LocalTime.now();
 		Optional<TimeSlot> timeSlot = dayTimeSlot.stream()
