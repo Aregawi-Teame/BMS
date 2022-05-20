@@ -8,7 +8,7 @@ import java.util.List;
 public interface TimeSlotService {
     public TimeSlot findById(long id);
     public List<TimeSlot> findAll();
-    public TimeSlot save(TimeSlot timeSlot, long locationId);
+    public TimeSlot save(TimeSlot timeSlot, long locationId) throws NotAuthorizedException;
     public TimeSlot update(TimeSlot timeslot, long id);
     public void deleteById(long id);
 

@@ -23,31 +23,25 @@ public class Plan {
     @NotNull(message = "plan name should not be null")
     @NotEmpty(message = "plan name should not be empty")
     private String name;
-
+    
+    @ManyToOne
+    @JoinColumn(name = "activity_type_id")
+    private ActivityType activityType;
+    
     private String description;
     @ManyToMany
     @JoinTable(name="Plan_Location",
             joinColumns = {@JoinColumn(name="Plan_id")},
             inverseJoinColumns = {@JoinColumn(name="Location_id")}
     )
-
     private Set<Location> locations;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="Plan_Role",
             joinColumns = {@JoinColumn(name="Plan_id")},
             inverseJoinColumns = {@JoinColumn(name="Role_id")}
     )
     private Set<Role> roles;
-
-    public Plan(Long id, String name, String description, Set<Location> locations, Set<Role> roles) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-
-        this.locations = locations;
-        this.roles = roles;
-    }
 
     @Override
     public String toString() {

@@ -22,7 +22,7 @@ public class RoleServiceImpl implements RoleService{
 
     @Override
     public Role findById(Long id) {
-        return roleRepository.getById(id);
+        return roleRepository.findById(id).get();
     }
 
     @Override
@@ -32,12 +32,15 @@ public class RoleServiceImpl implements RoleService{
 
     @Override
     public Role update(Long id, Role role) {
-        Role existingRole = findById(id);
-        Role updateResponse = null;
-        if(existingRole != null){
-            updateResponse = roleRepository.save(role);
-        }
-        return updateResponse;
+    	role.setId(id);
+    	return roleRepository.save(role);
+    	
+//        Role existingRole = findById(id);
+//        Role updateResponse = null;
+//        if(existingRole != null){
+//            updateResponse = roleRepository.save(role);
+//        }
+//        return updateResponse;
     }
 
     @Override

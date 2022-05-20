@@ -28,8 +28,6 @@ public class Location {
     private String description;
     private int capacity;
 
-
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id")
     private List<TimeSlot> timeSlots;

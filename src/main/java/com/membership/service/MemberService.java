@@ -16,9 +16,10 @@ public interface MemberService {
 	public Optional<Member> findByEmail(String email);
 	public Member addMemberRole(Long memberId, Long roleId);
 	public Member updateMember(Long memberId, Member updatedMember);
-	public Member addMembership(Long memberId, Membership membership);
+	public Member addMembership(Long memberId, Membership membership) throws NotAuthorizedException;
 	public Set<Membership> findAllMemberMemberships(Long memberId);
 	public List<Plan> findAllMemberPlans(Long memberId);
 	public Set<Transaction> findAllMemberTransactions(Long id);
 	public Set<Membership> findAllMemberMembershipsWithTypeChecker(Long memberId);
+	public void deleteById(Long id);
 }

@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.membership.service.NotAuthorizedException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -25,6 +27,13 @@ public class ControllerExceptionAspect {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
     public Map<String, String> handleInvalidArgument(NoSuchElementException exception){
+        Map<String, String> errMessage = new HashMap<>();
+       errMessage.put("Error Message", exception.getMessage());
+        return errMessage;
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotAuthorizedException.class)
+    public Map<String, String> handleInvalidArgument(NotAuthorizedException exception){
         Map<String, String> errMessage = new HashMap<>();
        errMessage.put("Error Message", exception.getMessage());
         return errMessage;

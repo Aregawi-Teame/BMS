@@ -41,13 +41,16 @@ public class Transaction {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @Valid
-    @ManyToOne
-    @JoinColumn(name = "activity_type_id")
-    private ActivityType activityType;
+//    @Valid
+//    @ManyToOne
+//    @JoinColumn(name = "activity_type_id")
+//    private ActivityType activityType;
 
     @NotNull(message = "transaction status should not be null")
     private boolean isSuccessful;
-
+    
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private TransactionDescription transactionDescription;
 
 }

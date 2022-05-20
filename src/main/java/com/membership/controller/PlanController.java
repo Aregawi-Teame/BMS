@@ -2,6 +2,7 @@ package com.membership.controller;
 
 import com.membership.domain.Location;
 import com.membership.domain.Plan;
+import com.membership.service.NotAuthorizedException;
 import com.membership.service.PlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class PlanController {
     }
 
     @PostMapping
-    public Plan addAPlan(@RequestBody @Valid Plan plan){
+    public Plan addAPlan(@RequestBody @Valid Plan plan) throws NotAuthorizedException{
         return planService.save(plan);
     }
 

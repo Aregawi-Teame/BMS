@@ -9,7 +9,7 @@ import java.util.Set;
 public interface PlanService {
     public List<Plan> findAll();
     public Plan findById(Long id);
-    public Plan save(Plan plan);
+    public Plan save(Plan plan) throws NotAuthorizedException;
     public Plan update(Plan plan, Long id);
     public void deleteById(Long id);
     public Set<Location> getAllPlanLocations(Long id);

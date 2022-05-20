@@ -46,7 +46,7 @@ public class Member {
 	private Set<Badge> badges;
 
 	@NotNull
-	@OneToMany()
+	@ManyToMany
 	@JoinTable(name = "member_role", joinColumns = {@JoinColumn(name="member_id")},
 									inverseJoinColumns = {@JoinColumn(name="role_id")})
 	private Set<Role> roles;

@@ -1,6 +1,7 @@
 package com.membership.controller;
 
 import com.membership.domain.TimeSlot;
+import com.membership.service.NotAuthorizedException;
 import com.membership.service.TimeSlotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class TimeSlotController {
     }
 
     @PostMapping("/location/{locationId}")
-    public TimeSlot saveByLocation(@RequestBody @Valid TimeSlot timeSlot, @RequestParam(name = "locationId") long locationId){
+    public TimeSlot saveByLocation(@RequestBody @Valid TimeSlot timeSlot, @RequestParam(name = "locationId") long locationId) throws NotAuthorizedException{
         return timeSlotService.save(timeSlot, locationId);
     }
     @PostMapping

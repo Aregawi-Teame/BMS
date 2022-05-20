@@ -16,10 +16,13 @@ import com.membership.repository.MemberRepository;
 
 @Service
 @Transactional
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	private MemberRepository memberRepository;
+	@Autowired
+	private PlanService planService;
+	
 	@Override
 	public List<Member> findAll() {
 		return memberRepository.findAll();
@@ -64,18 +67,20 @@ public class MemberServiceImpl implements MemberService{
 
 	@Override
 	public Member updateMember(Long memberId, Member updatedMember) {
-		Member member =findById(memberId);
+		Member member = findById(memberId);
 		if(updatedMember.getFirstName()!=null) member.setFirstName(updatedMember.getFirstName());
 		if(updatedMember.getLastName()!=null) member.setLastName(updatedMember.getLastName());
 		if(updatedMember.getEmail()!=null) member.setEmail(updatedMember.getEmail());
+		if(updatedMember.getRoles()!=null) member.setRoles(updatedMember.getRoles());
 		return save(member);
 	}
 
 	@Override
-	public Member addMembership(Long memberId, Membership membership) {
+	public Member addMembership(Long memberId, Membership membership) throws NotAuthorizedException  {
 		Member member = findById(memberId);
-		if (!allowedRoleFoundInMember(member, membership.getPlan()))
-			return null;
+		Plan plan = planService.findById(membership.getPlan().getId());
+		if (!allowedRoleFoundInMember(member, plan))
+			throw new NotAuthorizedException("Member has no required role for this plan.");
 		member.addMemebrship(membership);
 		return save(member);
 	}
@@ -120,6 +125,11 @@ public class MemberServiceImpl implements MemberService{
 	@Override
 	public Optional<Member> findByEmail(String email) {
 		return memberRepository.findByEmail(email);
+	}
+
+	@Override
+	public void deleteById(Long id) {
+		memberRepository.deleteById(id);		
 	}
 
 }

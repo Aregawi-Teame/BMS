@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.membership.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.membership.service.MemberService;
+import com.membership.service.NotAuthorizedException;
 
 import javax.validation.Valid;
 
@@ -36,6 +38,11 @@ public class MemberController {
 	@PostMapping
 	public Member save(@RequestBody Member member) {
 		return memberService.save(member);
+	}
+	
+	@DeleteMapping("/{id}")
+	public void deleteById(@PathVariable(name="id") Long id) {
+		memberService.deleteById(id);
 	}
 	
 	@PatchMapping("/{id}/badges")
@@ -62,14 +69,14 @@ public class MemberController {
 		return memberService.addMemberRole(memberId, memberId);
 	}
 	
-	@PutMapping("/{id}")
+	@PatchMapping("/{id}")
 	public Member updateMember(@PathVariable(name="id") String id, @RequestBody @Valid Member updatedMember) {
 		Long memberId = Long.parseLong(id);
 		return memberService.updateMember(memberId, updatedMember);
 	}
 	
 	@PatchMapping("/{memberId}/memberships")
-	public Member addMembership(@PathVariable(name="memberId") Long memberId, @RequestBody @Valid Membership membership) {
+	public Member addMembership(@PathVariable(name="memberId") Long memberId, @RequestBody @Valid Membership membership) throws NotAuthorizedException {
 		return memberService.addMembership(memberId, membership);
 	}
 	

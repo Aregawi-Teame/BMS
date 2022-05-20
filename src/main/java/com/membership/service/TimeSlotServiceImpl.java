@@ -27,8 +27,15 @@ public class TimeSlotServiceImpl implements TimeSlotService{
     }
 
     @Override
-    public TimeSlot save(TimeSlot timeSlot, long locationId) {
+    public TimeSlot save(TimeSlot timeSlot, long locationId) throws NotAuthorizedException {
         Location location = locationService.findById(locationId);
+        
+        List<TimeSlot> timeSlots = location.getTimeSlots();
+        boolean overLaps = timeSlots.stream().anyMatch(t -> t.getDayOfWeek() ==timeSlot.getDayOfWeek()
+        		&& timeSlot.getStartTime().isAfter(t.getStartTime()) && timeSlot.getStartTime().isBefore(t.getEndTime())
+        		|| timeSlot.getEndTime().isAfter(t.getStartTime()) && timeSlot.getEndTime().isBefore(t.getEndTime()));
+        if (overLaps) throw new NotAuthorizedException("Time overlaps with an existing time slot");
+        
         location.getTimeSlots().add(timeSlot);
         return timeSlotRepository.save(timeSlot);
     }

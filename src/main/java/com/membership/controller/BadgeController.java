@@ -39,12 +39,6 @@ public class BadgeController {
 		badgeService.deleteById(badgeId);
 	}
 	
-//	@GetMapping("/{id}/member")
-//	public Member findBadgeMember(@PathVariable(name="id") String id) {
-//		Long badgeId = Long.parseLong(id);
-//		return badgeService.findBadgeMember(badgeId);
-//	}
-//	
 	@GetMapping("/swipe")
 	public boolean hasAccess(@RequestParam(name="badgeId") Long badgeId,@RequestParam(name="locationId") long locationId, @RequestParam(name="planId") long planId) {
 		return badgeService.hasAccess(badgeId, locationId, planId);

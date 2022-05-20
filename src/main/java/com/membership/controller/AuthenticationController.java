@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.membership.domain.Member;
 import com.membership.service.MemberService;
+import com.membership.service.NotAuthorizedException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,17 +26,20 @@ public class AuthenticationController {
     private MemberService memberService;
     
     @GetMapping
-    private  Member isAuthenticated(){
+    private  Member isAuthenticated() throws NotAuthorizedException{
         KeycloakAuthenticationToken token = (KeycloakAuthenticationToken) httpServletRequest.getUserPrincipal();
+        if(token==null)throw new NotAuthorizedException("Unauthorized member");
         @SuppressWarnings("rawtypes")
 		KeycloakPrincipal principal=(KeycloakPrincipal)token.getPrincipal();
         KeycloakSecurityContext session = principal.getKeycloakSecurityContext();
         AccessToken accessToken = session.getToken();
-        //String role = accessToken.getRealmAccess().getRoles().stream().findFirst().get();
+        String role = accessToken.getRealmAccess().getRoles().stream().filter(rol->rol.equals("checker")).findFirst().get();
+        System.out.println(role);
+        if(!role.equals("checker"))throw new NotAuthorizedException("Unauthorized member");
         String email = accessToken.getEmail();
         Member member = memberService.findByEmail(email).get();
         if(member!=null) return member;
-        return null;
+        throw new NotAuthorizedException("Unauthorized member");
     }
 
 }
