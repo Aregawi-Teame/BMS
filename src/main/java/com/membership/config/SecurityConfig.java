@@ -27,8 +27,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         http.authorizeRequests()
             //.antMatchers("/test/anonymous").permitAll()
         
-            .antMatchers("/api/badges/swipe").hasAnyRole("scanner")
-            
+            .antMatchers("/api/badges/swipe").hasAnyRole("checker")
+            .antMatchers("/api/members/{memberId}/memberships").hasAnyRole("checker","admin")
+            .antMatchers("/api/members/{memberId}/badges").hasAnyRole("checker","admin")
             .antMatchers("/api/badges").hasAnyRole("admin")
             .antMatchers("/api/members").hasAnyRole("admin")
             .antMatchers("/api/memberships").hasAnyRole("admin")

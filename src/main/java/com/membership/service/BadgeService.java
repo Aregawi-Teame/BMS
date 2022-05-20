@@ -13,5 +13,5 @@ public interface BadgeService {
 	public Badge update(Long badgeId, Badge updatedBadge);
 	public void deleteById(Long id);
 	public Member findBadgeMember(Long badgeId);
-	public boolean hasAccess(Long badgeId, Long locationId, Long planId);
+	public String hasAccess(Long badgeId, Long locationId, Long planId) throws NotAuthorizedException;
 }

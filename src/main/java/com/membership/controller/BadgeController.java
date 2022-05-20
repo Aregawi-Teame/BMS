@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.membership.domain.Badge;
 import com.membership.service.BadgeService;
+import com.membership.service.NotAuthorizedException;
 
 import javax.validation.Valid;
 
@@ -40,7 +41,7 @@ public class BadgeController {
 	}
 	
 	@GetMapping("/swipe")
-	public boolean hasAccess(@RequestParam(name="badgeId") Long badgeId,@RequestParam(name="locationId") long locationId, @RequestParam(name="planId") long planId) {
+	public String hasAccess(@RequestParam(name="badgeId") Long badgeId,@RequestParam(name="locationId") long locationId, @RequestParam(name="planId") long planId) throws NotAuthorizedException {
 		return badgeService.hasAccess(badgeId, locationId, planId);
 	}
 }

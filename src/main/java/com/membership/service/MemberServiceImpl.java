@@ -87,8 +87,8 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public Set<Membership> findAllMemberMemberships(Long memberId) {
-		return findById(memberId).getMemberships();
-	}
+		return findById(memberId).getMemberships();	
+		}
 
 	//CRUD Req.No.8 - For a member, return a list all plans
 	@Override

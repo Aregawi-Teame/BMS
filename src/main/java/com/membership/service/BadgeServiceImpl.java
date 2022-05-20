@@ -68,10 +68,10 @@ public class BadgeServiceImpl implements BadgeService {
 	}
 
 	@Override
-	public boolean hasAccess(Long badgeId, Long locationId, Long planId) {
+	public String hasAccess(Long badgeId, Long locationId, Long planId) throws NotAuthorizedException {
 		// initial reasons to decline access (no badge, location or plan)
 		if (badgeId == null || locationId == null || planId == null)
-			return false;
+			throw new NotAuthorizedException("BAD_REQUEST");
 		// fetch location from db
 		Location accessLocation = locationService.findById(locationId);
 		// Get the time of access attempt
@@ -82,7 +82,7 @@ public class BadgeServiceImpl implements BadgeService {
 		if (badge == null) {
 			createTransaction(currentDateTime, accessLocation, false, TransactionDescription.INVALID_BADGE_ID, null,
 					null, null);
-			return false;
+			throw new NotAuthorizedException(TransactionDescription.INVALID_BADGE_ID.toString());
 		}
 
 		// fetch member from given badge
@@ -91,18 +91,18 @@ public class BadgeServiceImpl implements BadgeService {
 		if (member == null) {
 			createTransaction(currentDateTime, accessLocation, false, TransactionDescription.BADGE_HAS_NO_MEMBER, null,
 					null, null);
-			return false; // Not authorized
+			throw new NotAuthorizedException(TransactionDescription.BADGE_HAS_NO_MEMBER.toString()); // Not authorized
 		}
 		// check if badge is active and not expired
 		if (!badge.isActive()) {
 			createTransaction(currentDateTime, accessLocation, false, TransactionDescription.INACTIVE_BADGE, null, null,
 					member);
-			return false; // Not authorized
+			throw new NotAuthorizedException(TransactionDescription.INACTIVE_BADGE.toString()); // Not authorized
 		}
 		if (badge.getExpirationDate().isBefore(LocalDate.now())) {
 			createTransaction(currentDateTime, accessLocation, false, TransactionDescription.EXPIRED_BADGE, null, null,
 					member);
-			return false; // Not authorized
+			throw new NotAuthorizedException(TransactionDescription.EXPIRED_BADGE.toString()); // Not authorized
 		}
 		Membership membership = member.getMemberships().stream()
 				.filter(membship -> membship.getPlan().getId() == planId).findFirst().orElse(null);
@@ -110,14 +110,14 @@ public class BadgeServiceImpl implements BadgeService {
 		if (membership == null) {
 			createTransaction(currentDateTime, accessLocation, false, TransactionDescription.BADGE_HAS_NO_MEMBERSHIP,
 					null, null, member);
-			return false; // Not authorized
+			throw new NotAuthorizedException(TransactionDescription.BADGE_HAS_NO_MEMBERSHIP.toString()); // Not authorized
 		}
 
 		// check if membership is not expired
 		if (membership.getEndDate().isBefore(LocalDate.now())) {
 			createTransaction(currentDateTime, accessLocation, false, TransactionDescription.EXPIRED_MEMBERSHIP,
 					membership, null, member);
-			return false; // Membership is expired
+			throw new NotAuthorizedException(TransactionDescription.EXPIRED_MEMBERSHIP.toString()); // Membership is expired
 		}
 
 		// get the timeslots of the current day for this location
@@ -126,11 +126,12 @@ public class BadgeServiceImpl implements BadgeService {
 				.filter(s -> s.getDayOfWeek().valueOfTheDay() == dayOfTheWeek).collect(Collectors.toList());
 		// check if timeslot is present (duration is allowed for access)
 		Optional<TimeSlot> timeSlot = currentDayTimeSlots.stream()
-				.filter(s -> s.getStartTime().isBefore(currentTime) && s.getEndTime().isAfter(currentTime)).findFirst();
+				.filter(s -> s.getStartTime().isBefore(currentTime) && s.getEndTime().isAfter(currentTime)).findFirst()
+				.filter(t -> t.getActivityType().getActivityName().equals(membership.getPlan().getActivityType().getActivityName()));
 		if (!timeSlot.isPresent()) {
 			createTransaction(currentDateTime, accessLocation, false, TransactionDescription.NOT_ALLOWED_DURATION,
 					membership, null, member);
-			return false; // this means out of time or not opened yet;
+			throw new NotAuthorizedException(TransactionDescription.NOT_ALLOWED_DURATION.toString()); // this means out of time or not opened yet;
 		}
 
 		// check if membership limit has been reached
@@ -139,12 +140,12 @@ public class BadgeServiceImpl implements BadgeService {
 					.filter(tx -> tx.getDateTime().getMonthValue() == LocalDate.now().getMonthValue())
 					.filter(tx -> tx.getDateTime().getYear() == LocalDate.now().getYear())
 					.filter(tx -> tx.isSuccessful()).filter(tx -> tx.getMembership().getPlan().getActivityType()
-							.getActivityName() == timeSlot.get().getActivityType().getActivityName())
+							.getActivityName().equals(timeSlot.get().getActivityType().getActivityName()))
 					.count();
 			if (membership.getQuota() <= successfulTransactionsCount) {
 				createTransaction(currentDateTime, accessLocation, false, TransactionDescription.LIMIT_QUOTA_REACHED,
 						membership, timeSlot.get().getActivityType(), member);
-				return false;// quota reached
+				throw new NotAuthorizedException(TransactionDescription.LIMIT_QUOTA_REACHED.toString());// quota reached
 			}
 		}
 
@@ -152,7 +153,7 @@ public class BadgeServiceImpl implements BadgeService {
 		createTransaction(currentDateTime, accessLocation, true, TransactionDescription.SUCCESSFUL_ACCESS, membership,
 				timeSlot.get().getActivityType(), member);
 
-		return true;
+		return TransactionDescription.SUCCESSFUL_ACCESS.toString();
 	}
 
 	private void createTransaction(LocalDateTime currentDateTime, Location accessLocation, boolean isSuccessful,

@@ -11,8 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.membership.domain.Member;
+import com.membership.domain.Membership;
+import com.membership.domain.MembershipType;
 import com.membership.service.MemberService;
 import com.membership.service.NotAuthorizedException;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,7 +39,7 @@ public class AuthenticationController {
         KeycloakSecurityContext session = principal.getKeycloakSecurityContext();
         AccessToken accessToken = session.getToken();
         String role = accessToken.getRealmAccess().getRoles().stream().filter(rol->rol.equals("checker")).findFirst().get();
-        System.out.println(role);
+
         if(!role.equals("checker"))throw new NotAuthorizedException("Unauthorized member");
         String email = accessToken.getEmail();
         Member member = memberService.findByEmail(email).get();
