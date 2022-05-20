@@ -22,7 +22,7 @@ public class MemberServiceImpl implements MemberService {
 	private MemberRepository memberRepository;
 	@Autowired
 	private PlanService planService;
-	
+	@Autowired MembershipService membershipService;
 	@Override
 	public List<Member> findAll() {
 		return memberRepository.findAll();
@@ -108,11 +108,8 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Set<Membership> findAllMemberMembershipsWithTypeChecker(Long memberId) {
-		return findById(memberId).getMemberships()
-				.stream()
-				.filter(membership -> membership.getMembershipType()==MembershipType.CHECKER)
-				.collect(Collectors.toSet());
+	public List<Membership> findAllMemberMembershipsWithTypeChecker(Long memberId) {
+		return membershipService.findAllMemberMembershipsWithTypeChecker(memberId);
 	}
 	public boolean allowedRoleFoundInMember(Member member, Plan plan) {
 		Set<Role> allowedRoles = plan.getRoles();

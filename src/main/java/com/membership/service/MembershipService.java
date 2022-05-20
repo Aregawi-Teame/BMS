@@ -23,4 +23,5 @@ public interface MembershipService
 //	public Location getLocationByMembershipId(Long membershipId);
 //	public Membership addLocation(Long id, Location location);
 	public Membership addPlanForMembership( Long id,Plan plan);
+	public List<Membership> findAllMemberMembershipsWithTypeChecker(Long id);
 }

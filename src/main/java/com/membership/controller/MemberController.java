@@ -84,8 +84,8 @@ public class MemberController {
 	public Set<Membership> findAllMemberMemberships(@PathVariable(name="memberId") Long memberId) {
 		return memberService.findAllMemberMemberships(memberId);
 	}
-	@GetMapping("/{memberId}/checker/memberships")
-	public Set<Membership> findAllMemberMembershipsWithTypeChecker(@PathVariable(name="memberId") Long memberId) {
+	@GetMapping("/{memberId}/memberships/checker")
+	public List<Membership> findAllMemberMembershipsWithTypeChecker(@PathVariable(name="memberId") Long memberId) {
 		return memberService.findAllMemberMembershipsWithTypeChecker(memberId);
 	}
 

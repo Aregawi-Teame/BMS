@@ -20,6 +20,6 @@ public interface MemberService {
 	public Set<Membership> findAllMemberMemberships(Long memberId);
 	public List<Plan> findAllMemberPlans(Long memberId);
 	public Set<Transaction> findAllMemberTransactions(Long id);
-	public Set<Membership> findAllMemberMembershipsWithTypeChecker(Long memberId);
+	public List<Membership> findAllMemberMembershipsWithTypeChecker(Long memberId);
 	public void deleteById(Long id);
 }

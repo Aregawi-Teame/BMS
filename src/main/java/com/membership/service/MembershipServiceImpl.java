@@ -80,4 +80,8 @@ public class MembershipServiceImpl implements MembershipService
 		membership.setPlan(plan);
 		return membershipRepository.save(membership);
 	}
+	@Override
+	public List<Membership> findAllMemberMembershipsWithTypeChecker(Long memberId) {
+	   return membershipRepository.findMembershipsByMembershipType_Checker(memberId);
+	}
 }

@@ -69,5 +69,6 @@ public class MembershipController
 	public Membership addPlanForMembership(@PathVariable(name = "id") Long id, @RequestBody @Valid Plan plan){
 		return membershipService.addPlanForMembership(id, plan);
 	}
+	
 
 }
